@@ -1,0 +1,21 @@
+The first scene is a fixed image of a chess board with the black king tipped over, indicating that the Reaper has lost the Challenge from the player (who has just died).
+Overlay text: "To eschew eternal torment, I Challenged the Reaper."
+"Over the centuries, he had never been beaten. Until now."
+"As I witnessed his form dissipate, my own changed to match his ghastly visage."
+"I pondered: Had I gained a worse fate?"
+
+
+Scene 2 - infinity:
+The player arrives in a dense city, at a random day/night cycle. 
+At the beginning of each round, the text " Day #N" is shown in overlay for a few seconds to indicate progress.
+Between 1 and 3 people are to die at a specific time. An Hourglass (lifetimer) is shown in the UI for each target for today. A Soul Point is awarded for each who is reaped within a window of their assigned time. Each day ends when you complete your assigned reaping tasks.
+Minimum features:
+People who stand around.
+Nobody can see you and react.
+Soul harvesting, some sort of death animation / ghost comes out.
+
+Desired features:
+People walk on a random patrol between N waypoints with pathing.
+You have to become visible to reap and people nearby (including victim) run away from you.
+Some form of penalty for being seen by non-victims.
+
