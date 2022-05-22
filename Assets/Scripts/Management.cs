@@ -19,6 +19,10 @@ public class Management : MonoBehaviour
     void Start() {
         StartCoroutine(animateDayText());
     }
+    public void IncrementSouls() {
+        souls++;
+        soulsText.text = "Souls: " + souls;
+    }
     private IEnumerator animateDayText() {
         yield return new WaitForSeconds(0.5f);
         dayText.gameObject.SetActive(true);
