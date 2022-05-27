@@ -18,8 +18,10 @@ public class Lifetimer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       filledProp = Mathf.Max(0.0f, filledProp - Time.deltaTime * 0.03f); 
-       DrawLifetimer();
+    }
+    public void SetFilledProp(float filledProp) {
+        this.filledProp = filledProp;
+        DrawLifetimer();
     }
     private void DrawLifetimer() {
         upperBulb.localScale = new Vector3(1.0f, filledProp, 1.0f);
