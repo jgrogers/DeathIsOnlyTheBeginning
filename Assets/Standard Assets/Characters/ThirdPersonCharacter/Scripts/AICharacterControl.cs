@@ -33,7 +33,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
                 character.Move(agent.desiredVelocity, false, false);
             else {
                 character.Move(Vector3.zero, false, false);
-                target.position = RandomNavmeshLocation(20f);
+                //target.position = RandomNavmeshLocation(20f);
             }
         }
 

@@ -1186,7 +1186,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2045281279}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1eb6d2402c70985dbb96e902024c56c0, type: 3}
+  m_Script: {fileID: 11500000, guid: 8aeeb76d29818e54da056c4f906bb278, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2045281281
@@ -1208,7 +1208,7 @@ MonoBehaviour:
     - m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 2045281280}
-          m_TargetAssemblyTypeName: TiteSceneChange, Assembly-CSharp
+          m_TargetAssemblyTypeName: IntroSceneChange, Assembly-CSharp
           m_MethodName: OnFinishTitle
           m_Mode: 1
           m_Arguments:

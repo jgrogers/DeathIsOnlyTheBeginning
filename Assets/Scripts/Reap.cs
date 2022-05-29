@@ -5,13 +5,13 @@ using UnityEngine;
 public class Reap : MonoBehaviour
 {
     [SerializeField] GameObject reapEffect;
-    public Animator anim;
     // Start is called before the first frame update
     [SerializeField] bool reapEffectActive = false;
+    private Animator animator;
     void Start()
     {
-       anim = GetComponent<Animator>(); 
        reapEffect.SetActive(false);
+       animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -20,14 +20,13 @@ public class Reap : MonoBehaviour
        if (Input.GetKeyDown(KeyCode.R) && reapEffectActive == false)
        {
            reapEffectActive = true;
-           //anim.SetTrigger("Reap");
            StartCoroutine(ReapEffect());
        } 
     }
     private IEnumerator ReapEffect() {
         reapEffect.SetActive(true);
-        reapEffect.GetComponent<Animator>().SetTrigger("Reap");
-        yield return new WaitForSeconds(1.0f);
+        animator.SetTrigger("Attack");
+        yield return new WaitForSeconds(1.6f);
         reapEffect.SetActive(false);
         reapEffectActive = false;
     }

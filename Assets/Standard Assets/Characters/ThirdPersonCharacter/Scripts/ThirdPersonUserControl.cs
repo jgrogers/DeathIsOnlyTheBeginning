@@ -20,6 +20,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             if (Camera.main != null)
             {
                 m_Cam = Camera.main.transform;
+                Cursor.lockState = CursorLockMode.Locked;
             }
             else
             {
@@ -46,13 +47,13 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private void FixedUpdate()
         {
             // read inputs
-            // float h = CrossPlatformInputManager.GetAxis("Horizontal");
-            float h = CrossPlatformInputManager.GetAxis("Mouse X");
+            float h = CrossPlatformInputManager.GetAxis("Horizontal");
+            //float h = CrossPlatformInputManager.GetAxis("Mouse X");
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             bool crouch = Input.GetKey(KeyCode.C);
 
             // calculate move direction to pass to character
-            if (m_Cam != null)
+            if (false && m_Cam != null)
             {
                 // calculate camera relative direction to move:
                 m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
@@ -61,7 +62,9 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             else
             {
                 // we use world-relative directions in the case of no main camera
-                m_Move = v*Vector3.forward + h*Vector3.right;
+                //m_Move = v*Vector3.forward + h*Vector3.right;
+                // Switching to a character relative direction
+                m_Move = v * m_Character.transform.forward + h * m_Character.transform.right;
             }
 #if !MOBILE_INPUT
 			// walk speed multiplier

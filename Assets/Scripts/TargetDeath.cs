@@ -5,6 +5,10 @@ using UnityEngine.AI;
 
 public class TargetDeath : MonoBehaviour
 {
+    public bool isDying = false;
+    public bool isGhost = false;
+    [SerializeField] ParticleSystem harvestPS;
+    [SerializeField] ParticleSystem ghostPS;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,13 +20,31 @@ public class TargetDeath : MonoBehaviour
     {
         
     }
+    public void Ghost() {
+        if (isGhost) return;
+        isGhost = true;
+        GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped = true;
+        GetComponent<Animator>().SetTrigger("Die");
+        GetComponent<CapsuleCollider>().height = 0.01f;
+        StartCoroutine(GhostEffect());
+ 
+    }
+    IEnumerator Harvest() {
+        harvestPS.Play();
+        yield return new WaitForSeconds(2.3f);
+        harvestPS.Stop();
+    }
+    IEnumerator GhostEffect() {
+        ghostPS.Play();
+        yield return new WaitForSeconds(2.3f);
+        ghostPS.Stop();
+    }
     public void OnDeath() {
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        //GetComponent<CapsuleCollider>().enabled = false;
-        GetComponent<CapsuleCollider>().material = null;
-        GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
-        GetComponent<UnityStandardAssets.Characters.ThirdPerson.AICharacterControl>().enabled =false;
-        GetComponent<UnityStandardAssets.Characters.ThirdPerson.ThirdPersonCharacter>().enabled = false;
-        GetComponent<Animator>().enabled = false;
+        isDying = true;
+        GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped = true;
+        GetComponent<Animator>().SetTrigger("Die");
+        GetComponent<CapsuleCollider>().height = 0.01f;
+        StartCoroutine(Harvest());
+
     }
 }
