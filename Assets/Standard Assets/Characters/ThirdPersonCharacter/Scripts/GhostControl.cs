@@ -10,6 +10,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
     {
         public UnityEngine.AI.NavMeshAgent agent { get; private set; }             // the navmesh agent required for the path finding
         public GameObject target;                                    // target to aim for
+        [SerializeField] AudioClip[] birthClips;
 
         private void Start()
         {
@@ -18,6 +19,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             target = GameObject.FindGameObjectWithTag("Player");
 	        agent.updateRotation = false;
 	        agent.updatePosition = true;
+            if (birthClips.Length != 0)
+                GetComponent<AudioSource>().PlayOneShot(birthClips[Random.Range(0,birthClips.Length)]);
         }
 
 

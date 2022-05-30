@@ -9,6 +9,8 @@ using NavMesh = UnityEngine.AI.NavMesh;
 public class Management : MonoBehaviour
 {
     public TextMeshProUGUI dayText;
+    public TextMeshProUGUI loseText;
+    public TextMeshProUGUI winText;
     public TextMeshProUGUI soulsText;
     [SerializeField] GameObject lifetimerPrefab;
     [SerializeField] GameObject playerPrefab;
@@ -19,7 +21,7 @@ public class Management : MonoBehaviour
     public Canvas canvas;
     [SerializeField] int maxTargets = 3;
     [SerializeField] float lifetimerOffset = 100.0f;
-    [SerializeField] float playerOriginSampleRadius = 100f;
+    [SerializeField] float playerOriginSampleRadius = 600f;
     [SerializeField] Cinemachine.CinemachineVirtualCamera playerCamera;
     [SerializeField] MinimapCameraControl minimapCameraScript;
     [SerializeField] float minLifetime = 30.0f;
@@ -37,13 +39,13 @@ public class Management : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        dayText.text = "Day: " + PersistantData.Instance.day;
-        soulsText.text = "Souls: " + PersistantData.Instance.souls;
         dayText = GameObject.FindGameObjectWithTag("DayText").GetComponent<TextMeshProUGUI>();
         soulsText = GameObject.FindGameObjectWithTag("SoulsText").GetComponent<TextMeshProUGUI>();
+        dayText.text = "Day: " + PersistantData.Instance.day;
+        soulsText.text = "Souls: " + PersistantData.Instance.souls + "/"+soulsNeededToWin;
         canvas = GameObject.FindObjectOfType<Canvas>();
         dayText.gameObject.SetActive(false);
-        player = Instantiate<GameObject>(playerPrefab, PersistantData.Instance.origin.transform.position, Quaternion.identity);
+        player = Instantiate<GameObject>(playerPrefab, RandomNavmeshLocation(PersistantData.Instance.origin.transform.position, playerOriginSampleRadius), Quaternion.identity);
         playerCamera.Follow = player.transform;
         playerCamera.LookAt = player.transform;
         minimapCameraScript.SetTarget(player);
@@ -60,7 +62,7 @@ public class Management : MonoBehaviour
             lifetimers.Add(lifetimer);
             int targetPrefabChosen = Random.Range(0, targetPrefab.Count);
 
-            GameObject target = Instantiate<GameObject>(targetPrefab[targetPrefabChosen], RandomNavmeshLocation(PersistantData.Instance.origin.transform.position, PersistantData.Instance.targetRadius), Quaternion.identity);
+            GameObject target = Instantiate<GameObject>(targetPrefab[targetPrefabChosen], RandomNavmeshLocation(player.transform.position, PersistantData.Instance.targetRadius), Quaternion.identity);
             target.GetComponent<TargetDeath>().SetHaloColor(targetHighlightColors[i]);
             targets.Add(target);
         }
@@ -71,7 +73,7 @@ public class Management : MonoBehaviour
     }
     public void IncrementSouls() {
         PersistantData.Instance.souls++;
-        soulsText.text = "Souls: " + PersistantData.Instance.souls;
+        soulsText.text = "Souls: " + PersistantData.Instance.souls + "/"+ soulsNeededToWin;
     }
     private IEnumerator animateDayText() {
         yield return new WaitForSeconds(0.5f);
@@ -137,14 +139,22 @@ public class Management : MonoBehaviour
     }
     void NextDay() {
         PersistantData.Instance.day ++;
-        PersistantData.Instance.origin.transform.position = RandomNavmeshLocation(PersistantData.Instance.origin.transform.position, playerOriginSampleRadius);
+        //PersistantData.Instance.origin.transform.position = RandomNavmeshLocation(PersistantData.Instance.origin.transform.position, playerOriginSampleRadius);
         SceneManager.LoadScene(1);
     }
     void GameOver() {
-        Debug.Log("Game Over!");
+        Debug.Log("You Lose");
+        loseText.gameObject.SetActive(true);
+        StartCoroutine(creditsTransition());
     }
     void YouWin() {
-        Debug.Log("You Win!");
+        Debug.Log("You Win");
+        winText.gameObject.SetActive(true);
+        StartCoroutine(creditsTransition());
+    }
+    IEnumerator creditsTransition() {
+        yield return new WaitForSeconds(5.0f);
+        SceneManager.LoadScene(2);
     }
     public Vector3 RandomNavmeshLocation(Vector3 origin, float radius) {
         Vector3 randomDirection = Random.insideUnitSphere * radius;

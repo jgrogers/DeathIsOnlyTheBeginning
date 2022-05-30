@@ -17,7 +17,7 @@ public class Reap : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       if (Input.GetKeyDown(KeyCode.R) && reapEffectActive == false)
+       if ((Input.GetKeyDown(KeyCode.R) || Input.GetMouseButton(0)) && reapEffectActive == false)
        {
            reapEffectActive = true;
            StartCoroutine(ReapEffect());
@@ -26,6 +26,8 @@ public class Reap : MonoBehaviour
     private IEnumerator ReapEffect() {
         reapEffect.SetActive(true);
         animator.SetTrigger("Attack");
+        GetComponent<AudioSource>().
+        GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(1.6f);
         reapEffect.SetActive(false);
         reapEffectActive = false;

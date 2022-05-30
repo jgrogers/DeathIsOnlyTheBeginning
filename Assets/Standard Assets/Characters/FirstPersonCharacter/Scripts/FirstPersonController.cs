@@ -209,6 +209,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float vertical = CrossPlatformInputManager.GetAxis("Vertical");
 
             bool waswalking = m_IsWalking;
+            Debug.Log("Input: " + horizontal + " " + vertical);
 
 #if !MOBILE_INPUT
             // On standalone builds, walk/run speed is modified by a key press.

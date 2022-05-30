@@ -2,3 +2,4 @@ Skeleton model : totopremier from BlendSwap.com
 Music from freemusicarchive.org : Monplaisir - Une cathedrale au fond de mon sac
 Mesh and animation assets from mixamo.com : "Crypto"
 
+Sound effects from Eric Matyas https://soundimage.org 

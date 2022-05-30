@@ -11,6 +11,7 @@ public class TargetDeath : MonoBehaviour
     [SerializeField] ParticleSystem ghostPS;
     [SerializeField] Light haloLight;
     [SerializeField] GameObject uiHighlightMesh;
+    [SerializeField] AudioClip deathSound;
     // Start is called before the first frame update
     void Start()
     {
@@ -51,6 +52,7 @@ public class TargetDeath : MonoBehaviour
         GetComponent<CapsuleCollider>().height = 0.01f;
         uiHighlightMesh.GetComponent<MeshRenderer>().enabled = false;
         haloLight.enabled = false;
+        GetComponent<AudioSource>().PlayOneShot(deathSound);
         StartCoroutine(Harvest());
 
     }

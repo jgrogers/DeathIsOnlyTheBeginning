@@ -6,6 +6,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (Rigidbody))]
     [RequireComponent(typeof (CapsuleCollider))]
+	[RequireComponent(typeof(Animator))]
     public class RigidbodyFirstPersonController : MonoBehaviour
     {
         [Serializable]
@@ -82,12 +83,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public MouseLook mouseLook = new MouseLook();
         public AdvancedSettings advancedSettings = new AdvancedSettings();
 
-
+		[SerializeField] float m_RunCycleLegOffset = 0.2f; //specific to the character in sample assets, will need to be modified to work with others
+		const float k_Half = 0.5f;
+		[SerializeField] float m_AnimSpeedMultiplier = 1f;
+		[SerializeField] float m_MoveSpeedMultiplier = 1f;
+	
         private Rigidbody m_RigidBody;
+		Animator m_Animator;
         private CapsuleCollider m_Capsule;
         private float m_YRotation;
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded;
+        private Vector3 m_Move;
 
 
         public Vector3 Velocity
@@ -120,8 +127,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void Start()
         {
+			m_Animator = GetComponent<Animator>();
             m_RigidBody = GetComponent<Rigidbody>();
             m_Capsule = GetComponent<CapsuleCollider>();
+            cam = Camera.main;
             mouseLook.Init (transform, cam.transform);
         }
 
@@ -151,10 +160,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 desiredMove.x = desiredMove.x*movementSettings.CurrentTargetSpeed;
                 desiredMove.z = desiredMove.z*movementSettings.CurrentTargetSpeed;
                 desiredMove.y = desiredMove.y*movementSettings.CurrentTargetSpeed;
+                m_Move = desiredMove * SlopeMultiplier();
                 if (m_RigidBody.velocity.sqrMagnitude <
                     (movementSettings.CurrentTargetSpeed*movementSettings.CurrentTargetSpeed))
                 {
-                    m_RigidBody.AddForce(desiredMove*SlopeMultiplier(), ForceMode.Impulse);
+                    m_RigidBody.AddForce(m_Move, ForceMode.Impulse);
                 }
             }
 
@@ -183,6 +193,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     StickToGroundHelper();
                 }
             }
+            UpdateAnimator(m_Move);
             m_Jump = false;
         }
 
@@ -192,6 +203,43 @@ namespace UnityStandardAssets.Characters.FirstPerson
             float angle = Vector3.Angle(m_GroundContactNormal, Vector3.up);
             return movementSettings.SlopeCurveModifier.Evaluate(angle);
         }
+		private void UpdateAnimator(Vector3 move)
+		{
+			// update the animator parameters
+			m_Animator.SetFloat("Forward", move.z, 0.1f, Time.deltaTime);
+			m_Animator.SetFloat("Turn", move.x, 0.1f, Time.deltaTime);
+			m_Animator.SetBool("Crouch", false);
+			m_Animator.SetBool("OnGround", m_IsGrounded);
+			if (!m_IsGrounded)
+			{
+				m_Animator.SetFloat("Jump", m_RigidBody.velocity.y);
+			}
+
+			// calculate which leg is behind, so as to leave that leg trailing in the jump animation
+			// (This code is reliant on the specific run cycle offset in our animations,
+			// and assumes one leg passes the other at the normalized clip times of 0.0 and 0.5)
+			float runCycle =
+				Mathf.Repeat(
+					m_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime + m_RunCycleLegOffset, 1);
+			float jumpLeg = (runCycle < k_Half ? 1 : -1) * move.z;
+			if (m_IsGrounded)
+			{
+				m_Animator.SetFloat("JumpLeg", jumpLeg);
+			}
+
+			// the anim speed multiplier allows the overall speed of walking/running to be tweaked in the inspector,
+			// which affects the movement speed because of the root motion.
+			if (m_IsGrounded && move.magnitude > 0)
+			{
+				m_Animator.speed = m_AnimSpeedMultiplier;
+			}
+			else
+			{
+				// don't use that while airborne
+				m_Animator.speed = 1;
+			}
+		}
+
 
 
         private void StickToGroundHelper()
@@ -207,6 +255,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
             }
         }
+
+		public void OnAnimatorMove()
+		{
+			// we implement this function to override the default root motion.
+			// this allows us to modify the positional speed before it's applied.
+			if (m_IsGrounded && Time.deltaTime > 0)
+			{
+				Vector3 v = (m_Animator.deltaPosition * m_MoveSpeedMultiplier) / Time.deltaTime;
+
+				// we preserve the existing y part of the current velocity.
+				v.y = m_RigidBody.velocity.y;
+				m_RigidBody.velocity = v;
+			}
+		}
 
 
         private Vector2 GetInput()

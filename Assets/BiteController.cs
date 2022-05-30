@@ -8,6 +8,7 @@ public class BiteController : MonoBehaviour
     public Animator animator;
     [SerializeField] float biteRange = 4.0f;
     [SerializeField] float biteDamage = 20.0f;
+    [SerializeField] AudioClip biteSound;
 
     private void Start()
     {
@@ -27,5 +28,6 @@ public class BiteController : MonoBehaviour
     }
     public void BiteEvent() {
         target.GetComponent<HealthManagement>().TakeDamage(biteDamage);
+        GetComponentInParent<AudioSource>().PlayOneShot(biteSound);
     }
 }
