@@ -22,5 +22,14 @@ public class ReapAttackHit : MonoBehaviour
                 other.gameObject.GetComponentInParent<TargetDeath>().OnDeath();
             }
         }
+        if (other.gameObject.tag == "Ghost") {
+            if (!other.gameObject.GetComponentInParent<GhostDeath>().isDying) {
+
+                Debug.Log("Hit " + other.gameObject.name);
+                management.IncrementSouls();
+                other.gameObject.GetComponentInParent<GhostDeath>().OnDeath();
+            }
+ 
+        }
     }
 }

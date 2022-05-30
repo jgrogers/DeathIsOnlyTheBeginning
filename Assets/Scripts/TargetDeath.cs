@@ -9,6 +9,8 @@ public class TargetDeath : MonoBehaviour
     public bool isGhost = false;
     [SerializeField] ParticleSystem harvestPS;
     [SerializeField] ParticleSystem ghostPS;
+    [SerializeField] Light haloLight;
+    [SerializeField] GameObject uiHighlightMesh;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,13 +40,24 @@ public class TargetDeath : MonoBehaviour
         ghostPS.Play();
         yield return new WaitForSeconds(2.3f);
         ghostPS.Stop();
+        PersistantData.Instance.playerHealth += 5f;
+        if (PersistantData.Instance.playerHealth > PersistantData.Instance.playerMaxHealth)
+            PersistantData.Instance.playerHealth = PersistantData.Instance.playerMaxHealth;
     }
     public void OnDeath() {
         isDying = true;
         GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped = true;
         GetComponent<Animator>().SetTrigger("Die");
         GetComponent<CapsuleCollider>().height = 0.01f;
+        uiHighlightMesh.GetComponent<MeshRenderer>().enabled = false;
+        haloLight.enabled = false;
         StartCoroutine(Harvest());
 
+    }
+    public void SetHaloColor(Color color) {
+        haloLight.color = color;
+        uiHighlightMesh.GetComponent<MeshRenderer>().material.color = color;
+        uiHighlightMesh.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", color);
+        uiHighlightMesh.GetComponent<MeshRenderer>().enabled = true;
     }
 }

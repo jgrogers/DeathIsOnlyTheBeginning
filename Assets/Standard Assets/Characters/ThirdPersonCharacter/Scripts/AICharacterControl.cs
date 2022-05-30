@@ -11,7 +11,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
     {
         public UnityEngine.AI.NavMeshAgent agent { get; private set; }             // the navmesh agent required for the path finding
         public ThirdPersonCharacter character { get; private set; } // the character we are controlling
-        public Transform target;                                    // target to aim for
+        public Vector3 target = new Vector3();
 
         private void Start()
         {
@@ -21,26 +21,28 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 	        agent.updateRotation = false;
 	        agent.updatePosition = true;
+            target = RandomNavmeshLocation(20f);
         }
 
 
         private void Update()
         {
             if (target != null)
-                agent.SetDestination(target.position);
+                agent.SetDestination(target);
 
             if (agent.remainingDistance > agent.stoppingDistance)
                 character.Move(agent.desiredVelocity, false, false);
             else {
                 character.Move(Vector3.zero, false, false);
-                //target.position = RandomNavmeshLocation(20f);
+                target = RandomNavmeshLocation(100f);
             }
+            agent.speed = 0.5f;
         }
 
 
-        public void SetTarget(Transform target)
+        public void SetTarget(Vector3 newtarget)
         {
-            this.target = target;
+            target = newtarget;
         }
         public Vector3 RandomNavmeshLocation(float radius) {
             Vector3 randomDirection = Random.insideUnitSphere * radius;
