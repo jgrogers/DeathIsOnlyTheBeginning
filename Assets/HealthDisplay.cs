@@ -17,7 +17,7 @@ public class HealthDisplay : MonoBehaviour
         GetComponent<RectTransform>().anchoredPosition = new Vector2(0,0);
     }
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         HealthBar.sizeDelta = new Vector2(healthProp * fullWidth, fullHeight);
         Vector3 healthbarPosition = new Vector3(target.transform.position.x, target.transform.position.y + 2.0f, target.transform.position.z);

@@ -28,7 +28,9 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         {
             if (target != null) {
                 agent.SetDestination(target.transform.position);
-                transform.rotation = Quaternion.LookRotation(target.transform.position - transform.position, Vector3.up);
+                Vector3 transformOffset = target.transform.position - transform.position;
+                transformOffset.y = 0f;
+                transform.rotation = Quaternion.LookRotation(transformOffset, Vector3.up);
            }
         }
    }
